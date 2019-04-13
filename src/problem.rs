@@ -2,11 +2,16 @@ use std::vec::Vec;
 use std::io::{BufReader, BufRead};
 use std::fs::File;
 use std::str;
-use super::utils;
+use std::fmt;
+use rand::prelude::*;
+
 
 const NB_SAMPLE: usize = 10 * 2;
 const MAXIT: usize = 200;
 
+//
+// structure for storing data
+//
 pub struct Data {
     problem: u32,
     t_cost: Vec<Vec<u32>>,
@@ -18,21 +23,36 @@ pub struct Data {
     best_fit: u32
 }
 
+//
+// function for data
+//
 impl Data {
     pub fn new(prob: u32) -> Data {
         Data {
             problem: prob,
-            pop: Vec::new(),
+            pop: Vec::with_capacity(NB_SAMPLE),
             t_cost: Vec::new(),
             fit: Vec::with_capacity(NB_SAMPLE),
-            pop_child: Vec::new(),
+            pop_child: Vec::with_capacity(NB_SAMPLE),
             build_cost: Vec::new(),
             fit_child: Vec::with_capacity(NB_SAMPLE),
             best_fit: prob
         }
     }
+    pub fn print_pop(&self) {
+        for line in self.pop.clone().iter() {
+            for elem in line {
+                print!("{} ", elem);
+            }
+            println!();
+        }
+    }
 }
 
+
+//
+// function for problem
+//
 pub fn file_reader(filename: &str, data: &mut Data) {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
@@ -55,6 +75,17 @@ pub fn file_reader(filename: &str, data: &mut Data) {
             i = 0;
         }
     }
-    utils::print_double_tab(&mut data.t_cost);
-    utils::print_tab(&mut data.build_cost);
+}
+
+pub fn initialisation(data: &mut Data) {
+    for mut it in 0..NB_SAMPLE {
+        data.pop.push(Vec::new());
+        for _i in 0..data.t_cost[0].len(){
+            data.pop[it].push(rand::thread_rng().gen_range(0, 2));
+        }
+    }
+}
+
+pub fn evaluation(pop: Vec<Vec<u32>>,fit: Vec<usize>){
+
 }
