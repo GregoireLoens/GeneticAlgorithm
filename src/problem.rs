@@ -8,36 +8,31 @@ use std::i32;
 
 
 const NB_SAMPLE: usize = 10 * 2;
-const MAXIT: usize = 200;
+pub const MAXIT: usize = 200;
 
 //
 // structure for storing data
 //
+pub struct IndiData {
+    pop: Vec<Vec<u32>>,
+    fit: Vec<u32>,
+}
+
 pub struct Data {
     problem: u32,
     t_cost: Vec<Vec<u32>>,
-    pop: Vec<Vec<u32>>,
-    fit: Vec<u32>,
     build_cost: Vec<u32>,
-    pop_child: Vec<Vec<u32>>,
-    fit_child: Vec<usize>,
     best_fit: u32
 }
 
 //
 // function for data
 //
-impl Data {
-    pub fn new(prob: u32, best_f: u32) -> Data {
-        Data {
-            problem: prob,
-            pop: Vec::with_capacity(NB_SAMPLE),
-            t_cost: Vec::new(),
-            fit: Vec::with_capacity(NB_SAMPLE),
-            pop_child: Vec::with_capacity(NB_SAMPLE),
-            build_cost: Vec::new(),
-            fit_child: Vec::with_capacity(NB_SAMPLE),
-            best_fit: best_f
+impl IndiData{
+    pub fn new() -> IndiData {
+        IndiData {
+                pop: Vec::with_capacity(NB_SAMPLE),
+                fit: Vec::with_capacity(NB_SAMPLE)
         }
     }
     pub fn print_pop(&self) {
@@ -46,6 +41,17 @@ impl Data {
                 print!("{} ", elem);
             }
             println!();
+        }
+    }
+}
+
+impl Data {
+    pub fn new(prob: u32, best_f: u32) -> Data {
+        Data {
+            problem: prob,
+            t_cost: Vec::new(),
+            build_cost: Vec::new(),
+            best_fit: best_f
         }
     }
 }
@@ -78,11 +84,11 @@ pub fn file_reader(filename: &str, data: &mut Data) {
     }
 }
 
-pub fn initialisation(data: &mut Data) {
+pub fn initialisation(data: &mut Data, parent: &mut IndiData) {
     for mut it in 0..NB_SAMPLE {
-        data.pop.push(Vec::new());
+        parent.pop.push(Vec::new());
         for _i in 0..data.t_cost[0].len(){
-            data.pop[it].push(rand::thread_rng().gen_range(0, 2));
+            parent.pop[it].push(rand::thread_rng().gen_range(0, 2));
         }
     }
 }
@@ -108,28 +114,28 @@ pub fn fitness(t_cost: &mut Vec<Vec<u32>>, build_cost: &mut Vec<u32>, indi: &mut
     return fit;
 }
 
-pub fn evaluation(data: &mut Data){
+pub fn evaluation(data: &mut Data, parent: &mut IndiData){
     let mut ask_fit: u32;
 
     if data.problem == std::u32::MIN {ask_fit = std::u32::MAX;}
     else {ask_fit = std::u32::MIN;}
 
-    for i in 0..data.pop.len() {
-        data.fit.push(fitness(&mut data.t_cost, &mut data.build_cost, &mut data.pop[i]));
+    for i in 0..parent.pop.len() {
+        parent.fit.push(fitness(&mut data.t_cost, &mut data.build_cost, &mut parent.pop[i]));
         if data.problem == std::u32::MIN {
-            if data.fit[i] < data.best_fit{
-                data.best_fit = data.fit[i];
+            if parent.fit[i] < data.best_fit{
+                data.best_fit = parent.fit[i];
             }
-            if data.fit[i] < ask_fit {
-                ask_fit = data.fit[i];
+            if parent.fit[i] < ask_fit {
+                ask_fit = parent.fit[i];
             }
         }
         else {
-            if data.fit[i] > data.best_fit{
-                data.best_fit = data.fit[i];
+            if parent.fit[i] > data.best_fit{
+                data.best_fit = parent.fit[i];
             }
-            if data.fit[i] > ask_fit {
-                ask_fit = data.fit[i];
+            if parent.fit[i] > ask_fit {
+                ask_fit = parent.fit[i];
             }
         }
     }
