@@ -16,9 +16,12 @@ fn genetic() {
             p1 = problem::selection(&mut parent);
             p2 = problem::selection(&mut parent);
             problem:: crossover(p1, p2, j, j+1, &mut parent, &mut child);
+            problem::flip_mutation(&mut child, j);
+            problem::flip_mutation(&mut child, j + 1);
             j += 1;
         }
         problem::evaluation(&mut data, &mut child);
+        problem::replacement(&mut parent, &mut child);
     }
 
 }
