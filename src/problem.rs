@@ -14,8 +14,8 @@ pub const MAXIT: usize = 200;
 // structure for storing data
 //
 pub struct IndiData {
-    pub pop: Vec<Vec<u32>>,
-    pub fit: Vec<u32>,
+    pub pop:  Vec<Vec<u32>>,
+    pub fit:  Vec<u32>,
 }
 
 pub struct Data {
@@ -122,6 +122,7 @@ pub fn fitness(t_cost: &mut Vec<Vec<u32>>, build_cost: &mut Vec<u32>, indi: &mut
 }
 
 pub fn evaluation(data: &mut Data, parent: &mut IndiData){
+    parent.fit.clear();
     let mut ask_fit: u32;
 
     if data.problem == std::u32::MIN {ask_fit = std::u32::MAX;}
@@ -162,13 +163,33 @@ pub fn selection(parent: &mut IndiData) -> usize{
 pub fn crossover(p1: usize, p2: usize, c1: usize, c2: usize,
                  parent: &mut IndiData, child: &mut IndiData) {
     let cut = rand::thread_rng().gen_range(0, parent.pop[0].len());
-
     for i in 0..cut {
         child.pop[c1][i] = parent.pop[p1][i];
         child.pop[c2][i] = parent.pop[p2][i];
+
     }
-    for i in 0..parent.pop[0].len() {
-        child.pop[c1][i] = parent.pop[p1][i];
-        child.pop[c2][i] = parent.pop[p2][i];
+    for i in cut..parent.pop[0].len() {
+        child.pop[c1][i] = parent.pop[p2][i];
+        child.pop[c2][i] = parent.pop[p1][i];
     }
+}
+
+pub fn flip_mutation(child: &mut IndiData, j: usize) {
+    let prob: f32 = 1.0 / child.pop[0].len() as f32;
+    let mut rand: f32;
+    for i in 0..child.pop[j].len() {
+        rand = rand::thread_rng().gen();
+        if rand < prob {
+            if child.pop[j][i] == 0 {
+                child.pop[j][i] = 1;
+            }
+            else {
+                child.pop[j][i] = 0;
+            }
+        }
+    }
+}
+
+pub fn replacement(parent: &mut IndiData, child: &mut IndiData) {
+    parent.pop = child.pop.clone();
 }
