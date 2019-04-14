@@ -28,7 +28,7 @@ pub struct Data {
 // function for data
 //
 impl Data {
-    pub fn new(prob: u32) -> Data {
+    pub fn new(prob: u32, best_f: u32) -> Data {
         Data {
             problem: prob,
             pop: Vec::with_capacity(NB_SAMPLE),
@@ -37,7 +37,7 @@ impl Data {
             pop_child: Vec::with_capacity(NB_SAMPLE),
             build_cost: Vec::new(),
             fit_child: Vec::with_capacity(NB_SAMPLE),
-            best_fit: prob
+            best_fit: best_f
         }
     }
     pub fn print_pop(&self) {
@@ -109,5 +109,29 @@ pub fn fitness(t_cost: &mut Vec<Vec<u32>>, build_cost: &mut Vec<u32>, indi: &mut
 }
 
 pub fn evaluation(data: &mut Data){
-    data.fit.push(fitness(&mut data.t_cost, &mut data.build_cost, &mut data.pop[0]));
+    let mut ask_fit: u32;
+
+    if data.problem == std::u32::MIN {ask_fit = std::u32::MAX;}
+    else {ask_fit = std::u32::MIN;}
+
+    for i in 0..data.pop.len() {
+        data.fit.push(fitness(&mut data.t_cost, &mut data.build_cost, &mut data.pop[i]));
+        if data.problem == std::u32::MIN {
+            if data.fit[i] < data.best_fit{
+                data.best_fit = data.fit[i];
+            }
+            if data.fit[i] < ask_fit {
+                ask_fit = data.fit[i];
+            }
+        }
+        else {
+            if data.fit[i] > data.best_fit{
+                data.best_fit = data.fit[i];
+            }
+            if data.fit[i] > ask_fit {
+                ask_fit = data.fit[i];
+            }
+        }
+    }
+    println!("{} {}", ask_fit, data.best_fit);
 }

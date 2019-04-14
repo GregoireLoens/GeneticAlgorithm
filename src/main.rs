@@ -6,7 +6,7 @@ fn genetic(data: &mut problem::Data) {
 }
 
 fn main() {
-    let mut data= problem::Data::new(std::u32::MIN);
+    let mut data= problem::Data::new(std::u32::MIN, std::u32::MAX);
     problem::file_reader("problem_sample/123UnifS.txt", &mut data);
     genetic(&mut data);
 }
