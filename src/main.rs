@@ -2,7 +2,7 @@ mod problem;
 
 fn genetic(data: &mut problem::Data) {
     problem::initialisation(data);
-    data.print_pop();
+    problem::evaluation(data);
 }
 
 fn main() {

@@ -4,6 +4,7 @@ use std::fs::File;
 use std::str;
 use std::fmt;
 use rand::prelude::*;
+use std::i32;
 
 
 const NB_SAMPLE: usize = 10 * 2;
@@ -16,7 +17,7 @@ pub struct Data {
     problem: u32,
     t_cost: Vec<Vec<u32>>,
     pop: Vec<Vec<u32>>,
-    fit: Vec<usize>,
+    fit: Vec<u32>,
     build_cost: Vec<u32>,
     pop_child: Vec<Vec<u32>>,
     fit_child: Vec<usize>,
@@ -86,6 +87,27 @@ pub fn initialisation(data: &mut Data) {
     }
 }
 
-pub fn evaluation(pop: Vec<Vec<u32>>,fit: Vec<usize>){
+pub fn fitness(t_cost: &mut Vec<Vec<u32>>, build_cost: &mut Vec<u32>, indi: &mut Vec<u32>) -> u32 {
+    let mut fit = 0;
+    let mut tmp_fit = std::u32::MAX;
 
+    for i in 0..indi.len() {
+        if indi[i] == 1 {
+            fit += build_cost[i];
+        }
+    }
+    for i in 0..t_cost[0].len() {
+        for j in 0..t_cost.len() {
+            if indi[j] == 1 && t_cost[j][i] < tmp_fit {
+                tmp_fit = t_cost[j][i];
+            }
+        }
+        fit += tmp_fit;
+        tmp_fit = std::u32::MAX;
+    }
+    return fit;
+}
+
+pub fn evaluation(data: &mut Data){
+    data.fit.push(fitness(&mut data.t_cost, &mut data.build_cost, &mut data.pop[0]));
 }
