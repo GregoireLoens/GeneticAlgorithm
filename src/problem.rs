@@ -7,15 +7,15 @@ use rand::prelude::*;
 use std::i32;
 
 
-const NB_SAMPLE: usize = 10 * 2;
+pub const NB_SAMPLE: usize = 10 * 2;
 pub const MAXIT: usize = 200;
 
 //
 // structure for storing data
 //
 pub struct IndiData {
-    pop: Vec<Vec<u32>>,
-    fit: Vec<u32>,
+    pub pop: Vec<Vec<u32>>,
+    pub fit: Vec<u32>,
 }
 
 pub struct Data {
@@ -33,6 +33,13 @@ impl IndiData{
         IndiData {
                 pop: Vec::with_capacity(NB_SAMPLE),
                 fit: Vec::with_capacity(NB_SAMPLE)
+        }
+    }
+
+    pub fn new_copy(pop: &Vec<Vec<u32>>, fit: &Vec<u32>) -> IndiData {
+        IndiData {
+            pop: pop.clone(),
+            fit: fit.clone(),
         }
     }
     pub fn print_pop(&self) {
@@ -140,4 +147,28 @@ pub fn evaluation(data: &mut Data, parent: &mut IndiData){
         }
     }
     println!("{} {}", ask_fit, data.best_fit);
+}
+
+pub fn selection(parent: &mut IndiData) -> usize{
+    let s1= rand::thread_rng().gen_range(0, parent.pop.len());
+    let s2= rand::thread_rng().gen_range(0, parent.pop.len());
+
+    if parent.fit[s1] < parent.fit[s2]{
+        return s1;
+    }
+    return s2;
+}
+
+pub fn crossover(p1: usize, p2: usize, c1: usize, c2: usize,
+                 parent: &mut IndiData, child: &mut IndiData) {
+    let cut = rand::thread_rng().gen_range(0, parent.pop[0].len());
+
+    for i in 0..cut {
+        child.pop[c1][i] = parent.pop[p1][i];
+        child.pop[c2][i] = parent.pop[p2][i];
+    }
+    for i in 0..parent.pop[0].len() {
+        child.pop[c1][i] = parent.pop[p1][i];
+        child.pop[c2][i] = parent.pop[p2][i];
+    }
 }
