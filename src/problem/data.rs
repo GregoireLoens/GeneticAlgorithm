@@ -19,7 +19,7 @@ pub struct IndiData {
 }
 
 pub struct Data {
-    problem: u32,
+    pub problem: u32,
     t_cost: Vec<Vec<u32>>,
     build_cost: Vec<u32>,
     best_fit: u32
@@ -60,6 +60,19 @@ impl Data {
             build_cost: Vec::new(),
             best_fit: best_f
         }
+    }
+    pub fn print_cost(&self) {
+        println!("Transport cost matrix: ");
+        for line in self.t_cost.clone().iter() {
+            for elem in line {
+                print!("{} ", elem);
+            }
+            println!();
+        }
+        for elem in self.build_cost.clone().iter() {
+            print!("{} ", elem);
+        }
+        println!();
     }
 }
 
@@ -131,7 +144,7 @@ pub fn evaluation(data: &mut Data, parent: &mut IndiData){
     for i in 0..parent.pop.len() {
         parent.fit.push(fitness(&mut data.t_cost, &mut data.build_cost, &mut parent.pop[i]));
         if data.problem == std::u32::MIN {
-            if parent.fit[i] < data.best_fit{
+            if parent.fit[i] < data.best_fit {
                 data.best_fit = parent.fit[i];
             }
             if parent.fit[i] < ask_fit {
@@ -139,7 +152,7 @@ pub fn evaluation(data: &mut Data, parent: &mut IndiData){
             }
         }
         else {
-            if parent.fit[i] > data.best_fit{
+            if parent.fit[i] > data.best_fit {
                 data.best_fit = parent.fit[i];
             }
             if parent.fit[i] > ask_fit {
@@ -150,46 +163,21 @@ pub fn evaluation(data: &mut Data, parent: &mut IndiData){
     println!("{} {}", ask_fit, data.best_fit);
 }
 
-pub fn selection(parent: &mut IndiData) -> usize{
-    let s1= rand::thread_rng().gen_range(0, parent.pop.len());
-    let s2= rand::thread_rng().gen_range(0, parent.pop.len());
+pub fn mutation(child: &mut IndiData) {
+    let p = 1.0 / child.pop.len() as f64;
+    let mut rand: f64;
+    let mut index: usize;
 
-    if parent.fit[s1] < parent.fit[s2]{
-        return s1;
-    }
-    return s2;
-}
-
-pub fn crossover(p1: usize, p2: usize, c1: usize, c2: usize,
-                 parent: &mut IndiData, child: &mut IndiData) {
-    let cut = rand::thread_rng().gen_range(0, parent.pop[0].len());
-    for i in 0..cut {
-        child.pop[c1][i] = parent.pop[p1][i];
-        child.pop[c2][i] = parent.pop[p2][i];
-
-    }
-    for i in cut..parent.pop[0].len() {
-        child.pop[c1][i] = parent.pop[p2][i];
-        child.pop[c2][i] = parent.pop[p1][i];
-    }
-}
-
-pub fn flip_mutation(child: &mut IndiData, j: usize) {
-    let prob: f32 = 1.0 / child.pop[0].len() as f32;
-    let mut rand: f32;
-    for i in 0..child.pop[j].len() {
+    for i in 0..2 {
+        index = rand::thread_rng().gen_range(0, child.pop[0].len());
         rand = rand::thread_rng().gen();
-        if rand < prob {
-            if child.pop[j][i] == 0 {
-                child.pop[j][i] = 1;
+        if rand < p {
+            if child.pop[i][index] == 0 {
+                child.pop[i][index] = 1;
             }
             else {
-                child.pop[j][i] = 0;
+                child.pop[i][index] = 0;
             }
         }
     }
-}
-
-pub fn replacement(parent: &mut IndiData, child: &mut IndiData) {
-    parent.pop = child.pop.clone();
 }

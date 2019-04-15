@@ -1,0 +1,52 @@
+use crate::problem::data::{IndiData, Data};
+use rand::Rng;
+
+fn versus(parent: &mut IndiData, bracket: &mut Vec<usize>, data: &mut Data, index: usize) -> usize {
+    if data.problem == std::u32::MIN {
+        if parent.fit[bracket[index]] < parent.fit[bracket[index + 1]]{
+            return index + 1;
+        }
+        return index
+    }
+    else {
+        if parent.fit[bracket[index]] > parent.fit[bracket[index + 1]]{
+            return index + 1;
+        }
+        return index
+    }
+}
+
+fn do_tournament(data: &mut Data, parent: &mut IndiData,
+                 bracket: &mut Vec<usize>, nb_turn: usize) -> (usize, usize) {
+
+    for i in 0..nb_turn {
+        for j in 0..bracket.len() / 2{
+                bracket.remove(versus(parent, &mut bracket.clone(), data, j));
+            }
+        }
+    return (bracket[0], bracket[1]);
+}
+
+
+pub fn tournament(data: &mut Data, parent: &mut IndiData, t_size: usize) -> (usize, usize) {
+    let win1: usize;
+    let win2: usize;
+    let nb_turn: usize;
+    let mut bracket = Vec::with_capacity(t_size);
+
+    for i in 0..t_size {
+        let mut new_val = rand::thread_rng().gen_range(0, parent.pop.len());
+        while bracket.contains(&new_val) {
+            new_val = rand::thread_rng().gen_range(0, parent.pop.len());
+        }
+        bracket.push(new_val);
+    }
+
+    if t_size <= 2 {
+        return (bracket[0], bracket[1]);
+    }
+    else {
+        nb_turn = t_size / 4;
+        return do_tournament(data, parent, &mut bracket, nb_turn);
+    }
+}
