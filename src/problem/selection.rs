@@ -61,11 +61,13 @@ pub fn tournament(data: &mut Data, parent: &mut IndiData, t_size: usize) -> (usi
 */
 
 pub fn elitist(data: &mut Data, parent: &mut IndiData) -> (usize, usize){
-    let mut best_p: (usize, usize) = (0, 0);
+    let mut best_p: (usize, usize) = (0, 1);
     if data.problem == std::u32::MIN {
         for i in 0..parent.fit.len() {
             if parent.fit[i] < parent.fit[best_p.0]{
+                best_p.1 = best_p.0;
                 best_p.0 = i;
+
             }
         }
         for i in 0..parent.fit.len() {
@@ -77,12 +79,14 @@ pub fn elitist(data: &mut Data, parent: &mut IndiData) -> (usize, usize){
     }
     else {
         for i in 0..parent.fit.len() {
-            if parent.fit[i] > parent.fit[best_p.0]{
+            if parent.fit[i] > parent.fit[best_p.0] {
+                best_p.1 = best_p.0;
                 best_p.0 = i;
             }
         }
         for i in 0..parent.fit.len() {
-            if parent.fit[i] > parent.fit[best_p.1] && i != best_p.0 {
+            if parent.fit[i] > parent.fit[best_p.1]
+                && i != best_p.0 && parent.fit[best_p.0] != parent.fit[best_p.1] {
                 best_p.1 = i;
             }
         }

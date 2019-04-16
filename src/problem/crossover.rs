@@ -20,9 +20,9 @@ pub fn one_point(best_p: (usize, usize) , parent: &mut IndiData, child: &mut Ind
 pub fn k_point(best_p: (usize, usize), parent: &mut IndiData, child: &mut IndiData, k: usize) {
     let mut point_tab = Vec::with_capacity(k);
     let mut point: usize;
-    let mut index_child: (usize, usize) = (0, 1);
+    let old_len = child.pop.len();
+    let mut index_child: (usize, usize) = (old_len, old_len + 1);
 
-    child.pop.clear();
     child.pop.push(Vec::new());
     child.pop.push(Vec::new());
     for i in 0..k {

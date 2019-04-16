@@ -19,11 +19,18 @@ fn genetic() {
     */
 
     for it in 0..problem::data::MAXIT {
-        best_p = problem::selection::elitist(&mut data, &mut parent);
-        problem::crossover::k_point(best_p, &mut parent, &mut child, 2);
-        problem::data::mutation(&mut child);
-        problem::replacement::worst_indi(&mut data, &mut parent, &mut child);
+        for i in 0..parent.pop.len() / 2 {
+            best_p = problem::selection::tournament(&mut data, &mut parent, 18);
+            problem::crossover::k_point(best_p, &mut parent, &mut child, 2);
+            problem::mutation::mutation_of_one(&mut child);
+        }
+        problem::replacement::full(&mut parent, &mut child);
         problem::data::evaluation(&mut data, &mut parent);
+        /*print!("fitness tab: ");
+        for elem in parent.fit.iter() {
+            print!("{} ", elem)
+        }
+        println!();*/
     }
     print!("{}", data.buffer);
 }

@@ -173,22 +173,3 @@ pub fn evaluation(data: &mut Data, parent: &mut IndiData){
     data.buffer.push_str(&data.best_fit.to_string());
     data.buffer.push_str("\n ");
 }
-
-pub fn mutation(child: &mut IndiData) {
-    let p = 1.0 / child.pop.len() as f64;
-    let mut rand: f64;
-    let mut index: usize;
-
-    for i in 0..2 {
-        index = rand::thread_rng().gen_range(0, child.pop[0].len());
-        rand = rand::thread_rng().gen();
-        if rand < p {
-            if child.pop[i][index] == 0 {
-                child.pop[i][index] = 1;
-            }
-            else {
-                child.pop[i][index] = 0;
-            }
-        }
-    }
-}

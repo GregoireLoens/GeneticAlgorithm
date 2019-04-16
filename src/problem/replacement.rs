@@ -67,3 +67,13 @@ pub fn all_parent(parent: &mut IndiData, child: &mut IndiData, best_p: (usize, u
     parent.pop[best_p.0] = child.pop[0].clone();
     parent.pop[best_p.1] = child.pop[1].clone();
 }
+
+/*
+** full replacement
+*/
+
+pub fn full(parent: &mut IndiData, child: &mut IndiData) {
+    parent.pop = child.pop.clone();
+    child.pop.clear();
+    child.fit.clear();
+}
