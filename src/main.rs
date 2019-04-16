@@ -19,12 +19,13 @@ fn genetic() {
     */
 
     for it in 0..problem::data::MAXIT {
-        best_p = problem::selection::tournament(&mut data, &mut parent, 18);
-        problem::crossover::one_point(best_p, &mut parent, &mut child);
+        best_p = problem::selection::elitist(&mut data, &mut parent);
+        problem::crossover::k_point(best_p, &mut parent, &mut child, 2);
         problem::data::mutation(&mut child);
-        problem::replacement::worst(&mut data, &mut parent, &mut child);
+        problem::replacement::worst_indi(&mut data, &mut parent, &mut child);
         problem::data::evaluation(&mut data, &mut parent);
     }
+    print!("{}", data.buffer);
 }
 
 fn main() {

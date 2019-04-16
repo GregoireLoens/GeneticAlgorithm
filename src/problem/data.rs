@@ -22,7 +22,8 @@ pub struct Data {
     pub problem: u32,
     t_cost: Vec<Vec<u32>>,
     build_cost: Vec<u32>,
-    best_fit: u32
+    best_fit: u32,
+    pub buffer: String
 }
 
 //
@@ -58,9 +59,15 @@ impl Data {
             problem: prob,
             t_cost: Vec::new(),
             build_cost: Vec::new(),
-            best_fit: best_f
+            best_fit: best_f,
+            buffer: String::from("")
         }
     }
+
+    pub fn  get_costs(&self) -> (Vec<Vec<u32>>, Vec<u32>){
+        return (self.t_cost.clone(), self.build_cost.clone())
+    }
+
     pub fn print_cost(&self) {
         println!("Transport cost matrix: ");
         for line in self.t_cost.clone().iter() {
@@ -122,6 +129,7 @@ pub fn fitness(t_cost: &mut Vec<Vec<u32>>, build_cost: &mut Vec<u32>, indi: &mut
             fit += build_cost[i];
         }
     }
+
     for i in 0..t_cost[0].len() {
         for j in 0..t_cost.len() {
             if indi[j] == 1 && t_cost[j][i] < tmp_fit {
@@ -160,7 +168,10 @@ pub fn evaluation(data: &mut Data, parent: &mut IndiData){
             }
         }
     }
-    println!("{} {}", ask_fit, data.best_fit);
+    data.buffer.push_str(&ask_fit.to_string());
+    data.buffer.push(' ');
+    data.buffer.push_str(&data.best_fit.to_string());
+    data.buffer.push_str("\n ");
 }
 
 pub fn mutation(child: &mut IndiData) {

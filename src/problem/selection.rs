@@ -1,6 +1,11 @@
 use crate::problem::data::{IndiData, Data};
 use rand::Rng;
 
+
+/*
+** tournament
+*/
+
 fn versus(parent: &mut IndiData, bracket: &mut Vec<usize>, data: &mut Data, index: usize) -> usize {
     if data.problem == std::u32::MIN {
         if parent.fit[bracket[index]] < parent.fit[bracket[index + 1]]{
@@ -48,5 +53,39 @@ pub fn tournament(data: &mut Data, parent: &mut IndiData, t_size: usize) -> (usi
     else {
         nb_turn = t_size / 4;
         return do_tournament(data, parent, &mut bracket, nb_turn);
+    }
+}
+
+/*
+** Ultra elitist selection
+*/
+
+pub fn elitist(data: &mut Data, parent: &mut IndiData) -> (usize, usize){
+    let mut best_p: (usize, usize) = (0, 0);
+    if data.problem == std::u32::MIN {
+        for i in 0..parent.fit.len() {
+            if parent.fit[i] < parent.fit[best_p.0]{
+                best_p.0 = i;
+            }
+        }
+        for i in 0..parent.fit.len() {
+            if parent.fit[i] < parent.fit[best_p.1] && i != best_p.0 {
+                best_p.1 = i;
+            }
+        }
+        return best_p;
+    }
+    else {
+        for i in 0..parent.fit.len() {
+            if parent.fit[i] > parent.fit[best_p.0]{
+                best_p.0 = i;
+            }
+        }
+        for i in 0..parent.fit.len() {
+            if parent.fit[i] > parent.fit[best_p.1] && i != best_p.0 {
+                best_p.1 = i;
+            }
+        }
+        return best_p;
     }
 }
