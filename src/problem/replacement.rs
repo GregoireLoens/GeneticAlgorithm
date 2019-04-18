@@ -17,7 +17,7 @@ fn find_worst_minimum(parent: &mut IndiData) -> (usize, usize) {
 }
 
 pub fn worst_indi(data: &mut Data, parent: &mut IndiData, child: &mut IndiData) {
-    let mut worsts: (usize, usize);
+    let worsts: (usize, usize);
 
     if data.problem == std::u32::MIN {
         worsts = find_worst_minimum(parent);

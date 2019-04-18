@@ -2,7 +2,6 @@ use std::vec::Vec;
 use std::io::{BufReader, BufRead};
 use std::fs::File;
 use std::str;
-use std::fmt;
 use rand::prelude::*;
 use std::i32;
 
@@ -10,14 +9,17 @@ use std::i32;
 pub const NB_SAMPLE: usize = 10 * 2;
 pub const MAXIT: usize = 200;
 
-//
-// structure for storing data
-//
+/*
+** structure for storing data
+*/
+
+#[derive(Clone)]
 pub struct IndiData {
     pub pop:  Vec<Vec<u32>>,
     pub fit:  Vec<u32>,
 }
 
+#[derive(Clone)]
 pub struct Data {
     pub problem: u32,
     t_cost: Vec<Vec<u32>>,
@@ -26,9 +28,9 @@ pub struct Data {
     pub buffer: String
 }
 
-//
-// function for data
-//
+/*
+** function for data
+*/
 impl IndiData{
     pub fn new() -> IndiData {
         IndiData {
@@ -84,9 +86,9 @@ impl Data {
 }
 
 
-//
-// function for problem
-//
+/*
+** function for problem
+*/
 pub fn file_reader(filename: &str, data: &mut Data) {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
@@ -112,7 +114,7 @@ pub fn file_reader(filename: &str, data: &mut Data) {
 }
 
 pub fn initialisation(data: &mut Data, parent: &mut IndiData) {
-    for mut it in 0..NB_SAMPLE {
+    for it in 0..NB_SAMPLE {
         parent.pop.push(Vec::new());
         for _i in 0..data.t_cost[0].len(){
             parent.pop[it].push(rand::thread_rng().gen_range(0, 2));
@@ -172,4 +174,12 @@ pub fn evaluation(data: &mut Data, parent: &mut IndiData){
     data.buffer.push(' ');
     data.buffer.push_str(&data.best_fit.to_string());
     data.buffer.push_str("\n ");
+}
+
+pub fn total_fit(fit: &mut Vec<u32>) -> u32 {
+    let  mut total_fit: u32 = 0;
+    for elem in fit {
+        total_fit += elem.clone();
+    }
+    return total_fit;
 }

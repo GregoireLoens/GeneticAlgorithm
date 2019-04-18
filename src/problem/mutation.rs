@@ -25,7 +25,7 @@ pub fn mutation_on_multiple(child: &mut IndiData) {
     let mut rand: f64;
     let mut index: usize;
 
-    for i in 0..2 {
+    for i in 0..child.pop.len() {
         for j in 0..child.pop.len() {
             rand = rand::thread_rng().gen_range(0.0, 1.0);
             if rand < p {
